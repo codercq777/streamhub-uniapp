@@ -2,7 +2,7 @@
  * 信息流状态
  */
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { getStreamList, type NoteItem } from '@/api/stream'
 
 export type StreamTab = 'recommend' | 'follow'
