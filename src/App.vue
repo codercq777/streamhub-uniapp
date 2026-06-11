@@ -14,11 +14,11 @@ onLaunch(() => {
 @import './uni.scss';
 
 page {
-  background-color: #f5f5f5;
+  background-color: $bg-page;
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
-  font-size: 28rpx;
-  color: #333;
-  line-height: 1.5;
+  font-size: $font-size-base;
+  color: $text-regular;
+  line-height: $line-height-normal;
 }
 
 /* 通用类 */
@@ -33,6 +33,29 @@ page {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+
+/* 全局动画 */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fade-in $duration-slow $ease-out;
+}
+
+/* 减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* 安全区适配 */

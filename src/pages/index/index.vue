@@ -9,10 +9,16 @@ import { useStreamStore, type StreamTab } from '@/stores/stream'
 import StreamCard from '@/components/StreamCard/StreamCard.vue'
 import Empty from '@/components/Empty/Empty.vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
+import SkeletonCard from '@/components/SkeletonCard/SkeletonCard.vue'
 
 const store = useStreamStore()
 const leftList = computed(() => store.list.filter((_, i) => i % 2 === 0))
 const rightList = computed(() => store.list.filter((_, i) => i % 2 === 1))
+
+// 初始加载:列表空 + loading → 显示骨架
+const showSkeleton = computed(() => store.loading && store.list.length === 0)
+// 骨架填充数据(让高度有变化,避免左右两列错位难看)
+const skeletonSeeds = [0, 1, 2, 3, 4, 5]
 
 const loadMoreStatus = computed<'loading' | 'nomore' | 'error'>(() => {
   if (store.loading) return 'loading'
@@ -72,8 +78,26 @@ function onRetry() {
       </view>
     </view>
 
+    <!-- 骨架屏(初始加载) -->
+    <view v-if="showSkeleton" class="columns">
+      <view class="column">
+        <skeleton-card
+          v-for="(s, i) in skeletonSeeds.filter((_, idx) => idx % 2 === 0)"
+          :key="`sk-l-${i}`"
+          :seed="s"
+        />
+      </view>
+      <view class="column">
+        <skeleton-card
+          v-for="(s, i) in skeletonSeeds.filter((_, idx) => idx % 2 === 1)"
+          :key="`sk-r-${i}`"
+          :seed="s"
+        />
+      </view>
+    </view>
+
     <!-- 列表内容 -->
-    <view v-if="store.list.length > 0" class="columns">
+    <view v-else-if="store.list.length > 0" class="columns">
       <view class="column">
         <stream-card
           v-for="item in leftList"

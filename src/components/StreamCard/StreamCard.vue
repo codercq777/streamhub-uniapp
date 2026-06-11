@@ -4,7 +4,7 @@
   Vue 3 + script setup 写法,Vue 2 时代用 props 选项 + emit
 -->
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { formatCount, formatRelativeTime } from '@/utils/format'
 import type { NoteItem } from '@/api/stream'
 
@@ -24,6 +24,17 @@ const coverHeight = computed(() => {
   return ratios[props.note._id.length % ratios.length] + 'rpx'
 })
 
+/** 图片是否已加载完成 - 控制渐显 */
+const imgLoaded = ref(false)
+function onImgLoad() {
+  imgLoaded.value = true
+}
+function onImgError(e: any) {
+  // 兜底图,标记已加载以避免永久骨架
+  e.detail.value = 'https://picsum.photos/400/400'
+  imgLoaded.value = true
+}
+
 function onLikeTap() {
   emit('like', props.note._id)
 }
@@ -36,12 +47,16 @@ function onCardTap() {
   <view class="stream-card" @tap="onCardTap">
     <!-- 封面图 -->
     <view class="cover" :style="{ height: coverHeight }">
+      <!-- 图片加载前的骨架 -->
+      <view v-if="!imgLoaded" class="cover-skeleton" />
       <image
         class="cover-img"
+        :class="{ loaded: imgLoaded }"
         :src="note.images[0]"
         mode="widthFix"
         lazy-load
-        @error="(e: any) => (e.detail.value = 'https://picsum.photos/400/400')"
+        @load="onImgLoad"
+        @error="onImgError"
       />
       <view v-if="note.images.length > 1" class="multi-tag">
         <text class="iconfont">📷 {{ note.images.length }}</text>
@@ -79,11 +94,12 @@ function onCardTap() {
   border-radius: $border-radius;
   overflow: hidden;
   margin-bottom: $spacing-md;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
-  transition: transform 0.2s;
+  box-shadow: $shadow-sm;
+  transition: transform $duration $ease-out, box-shadow $duration $ease-out;
 
   &:active {
     transform: scale(0.98);
+    box-shadow: $shadow-xs;
   }
 }
 
@@ -93,10 +109,29 @@ function onCardTap() {
   background: #eee;
   overflow: hidden;
 
+  .cover-skeleton {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.04) 0%,
+      rgba(0, 0, 0, 0.08) 50%,
+      rgba(0, 0, 0, 0.04) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s $ease-in-out infinite;
+  }
+
   .cover-img {
     width: 100%;
     height: 100%;
     display: block;
+    opacity: 0;
+    transition: opacity $duration-slow $ease-out;
+
+    &.loaded {
+      opacity: 1;
+    }
   }
 
   .multi-tag {

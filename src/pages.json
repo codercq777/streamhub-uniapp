@@ -4,7 +4,9 @@
     "custom": {
       "^stream-card$": "@/components/StreamCard/StreamCard.vue",
       "^empty$": "@/components/Empty/Empty.vue",
-      "^load-more$": "@/components/LoadMore/LoadMore.vue"
+      "^load-more$": "@/components/LoadMore/LoadMore.vue",
+      "^skeleton$": "@/components/Skeleton/Skeleton.vue",
+      "^skeleton-card$": "@/components/SkeletonCard/SkeletonCard.vue"
     }
   },
   "pages": [

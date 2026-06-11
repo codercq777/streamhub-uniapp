@@ -1,33 +1,109 @@
 /**
- * 全局 SCSS 变量
- * 供所有 <style lang="scss"> 引用
+ * StreamHub · 全局设计 Token
+ * 单一来源:所有页面 <style lang="scss"> 引用这里的变量
+ * 修改一处,全站生效
+ *
+ * 命名规范:
+ *   颜色  -- 语义 ($primary, $text-primary)
+ *   尺寸  -- 层级 ($spacing-*, $radius-*, $shadow-*)
+ *   排版  -- 角色 ($font-size-*, $line-height-*, $font-weight-*)
+ *   动效  -- 时长/曲线 ($duration-*, $ease-*)
  */
 
-/* 主色调 */
+/* ============ 品牌色 ============ */
 $primary: #ff2442;
 $primary-light: #ff6478;
+$primary-lighter: #ffe5ea;
 $primary-dark: #d1001e;
 
-/* 文字色 */
-$text-primary: #333333;
-$text-regular: #666666;
-$text-secondary: #999999;
-$text-placeholder: #cccccc;
+/* ============ 文字色 ============ */
+$text-primary: #1a1a1a;       // 标题
+$text-regular: #333333;       // 正文
+$text-secondary: #666666;     // 次要
+$text-tertiary: #999999;      // 辅助
+$text-placeholder: #bbbbbb;   // 占位
+$text-on-primary: #ffffff;    // 反白
 
-/* 背景色 */
-$bg-page: #f5f5f5;
-$bg-card: #ffffff;
-$bg-mask: rgba(0, 0, 0, 0.5);
+/* ============ 背景 / 表面层 ============ */
+$bg-page: #f7f8fa;            // 页面底色
+$bg-card: #ffffff;            // 卡片底色
+$bg-elevated: #ffffff;        // 悬浮元素(同 card,语义区分)
+$bg-mask: rgba(0, 0, 0, 0.5); // 蒙层
+$bg-overlay: rgba(0, 0, 0, 0.04); // hover/active 微反馈
 
-/* 边框 */
+/* ============ 边框 / 分割 ============ */
 $border-color: #eeeeee;
-$border-radius-sm: 8rpx;
-$border-radius: 16rpx;
-$border-radius-lg: 24rpx;
+$border-color-light: #f5f5f5;
+$border-color-dark: #d9d9d9;
 
-/* 间距 */
-$spacing-xs: 8rpx;
-$spacing-sm: 16rpx;
-$spacing-md: 24rpx;
-$spacing-lg: 32rpx;
-$spacing-xl: 48rpx;
+/* ============ 圆角 ============ */
+$radius-xs: 4rpx;
+$radius-sm: 8rpx;
+$radius: 12rpx;
+$radius-md: 16rpx;
+$radius-lg: 20rpx;
+$radius-xl: 24rpx;
+$radius-pill: 999rpx;
+
+/* ============ 间距 ============ */
+$spacing-1: 4rpx;
+$spacing-2: 8rpx;
+$spacing-3: 12rpx;
+$spacing-4: 16rpx;
+$spacing-5: 20rpx;
+$spacing-6: 24rpx;
+$spacing-7: 32rpx;
+$spacing-8: 40rpx;
+$spacing-9: 48rpx;
+$spacing-10: 64rpx;
+
+/* ============ 字号梯度 (移动端以 750 设计稿) ============ */
+$font-size-xs: 20rpx;   // 11sp - 标签/版权
+$font-size-sm: 24rpx;   // 13sp - 辅助
+$font-size-base: 28rpx; // 14sp - 正文默认
+$font-size-md: 30rpx;   // 15sp - 卡片标题
+$font-size-lg: 32rpx;   // 16sp - 区块标题
+$font-size-xl: 36rpx;   // 18sp - 大标题
+$font-size-2xl: 40rpx;  // 20sp - 页面主标题
+$font-size-3xl: 48rpx;  // 24sp - 启动页
+
+/* ============ 行高 ============ */
+$line-height-tight: 1.3;   // 标题
+$line-height-normal: 1.5;  // 短文本
+$line-height-relaxed: 1.7; // 长正文
+
+/* ============ 字重 ============ */
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+/* ============ 阴影 ============ */
+$shadow-xs: 0 1rpx 2rpx rgba(0, 0, 0, 0.04);
+$shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+$shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
+$shadow-md: 0 6rpx 16rpx rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 12rpx 32rpx rgba(0, 0, 0, 0.12);
+$shadow-xl: 0 24rpx 64rpx rgba(0, 0, 0, 0.16);
+
+/* 品牌色阴影 - 用于强调元素 */
+$shadow-primary: 0 4rpx 16rpx rgba(255, 36, 66, 0.24);
+
+/* ============ 动效 ============ */
+$duration-fast: 120ms;
+$duration: 200ms;
+$duration-slow: 320ms;
+
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+$ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+$ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+/* ============ 兼容旧名 (避免破坏现有页面) ============ */
+$border-radius-sm: $radius-sm;
+$border-radius: $radius-md;
+$border-radius-lg: $radius-lg;
+$spacing-xs: $spacing-2;
+$spacing-sm: $spacing-4;
+$spacing-md: $spacing-6;
+$spacing-lg: $spacing-7;
+$spacing-xl: $spacing-9;
