@@ -15,7 +15,7 @@ import { toast } from '@/utils/platform'
 
 // ============ 开关 ============
 /** 是否使用 mock 数据(部署前改为 false 即可接真云函数) */
-export const USE_MOCK = true
+export const USE_MOCK = false
 
 // ============ 类型 ============
 export type RequestOptions = {

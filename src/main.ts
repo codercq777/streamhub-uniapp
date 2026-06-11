@@ -8,7 +8,7 @@ import App from './App.vue'
  * - 留空时,云函数调用会失败(但 mock 模式不受影响)
  * - 真小程序真机调试时必须填
  */
-export const CLOUD_ENV_ID = '' // ← 真联调前填入,例如 'streamhub-abc123'
+export const CLOUD_ENV_ID = 'cloud1-d5g91df8y79653f7a'
 
 export function createApp() {
   const app = createSSRApp(App)
