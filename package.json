@@ -31,6 +31,7 @@
     "@vue/runtime-core": "3.4.21",
     "@vue/tsconfig": "^0.5.1",
     "sass": "^1.71.1",
+    "tsx": "^4.22.4",
     "typescript": "^5.3.3",
     "vite": "5.2.8",
     "vue-tsc": "^2.0.6"

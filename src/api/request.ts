@@ -14,8 +14,15 @@ import { getToken, clearAuth } from '@/utils/auth'
 import { toast } from '@/utils/platform'
 
 // ============ 开关 ============
-/** 是否使用 mock 数据(部署前改为 false 即可接真云函数) */
-export const USE_MOCK = false
+/**
+ * 是否使用 mock 数据
+ *
+ * 默认 true:本环境下云开发 5s 超时硬限制 + 冷启动 3-5s,真云函数跑不通。
+ * 改 false 即可接真云函数(见 CLOUD_SETUP.md)。
+ *
+ * 无论开关如何,云函数失败都会 fallback 到 mock —— 这是 graceful degradation 设计。
+ */
+export const USE_MOCK = true
 
 // ============ 类型 ============
 export type RequestOptions = {
@@ -107,6 +114,9 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
 }
 
 // ============ 云函数调用(仅小程序) ============
+/** 自管超时:必须大于平台默认 5s,给真云函数留余地 */
+const CLOUD_TIMEOUT_MS = 8000
+
 function callCloudFunction<T>(options: RequestOptions): Promise<T> {
   return new Promise((resolve, reject) => {
     // 动态 require,避免 H5 端打包 wx-server-sdk
@@ -125,26 +135,43 @@ function callCloudFunction<T>(options: RequestOptions): Promise<T> {
       return
     }
 
+    // 关键:用 setTimeout 自管超时
+    // 因为 wx.cloud.callFunction 在某些错误下不调 fail callback
+    // (例如冷启动超时抛出 SystemError),Promise 会永远 hang
+    let settled = false
+    const settle = (fn: () => void) => {
+      if (settled) return
+      settled = true
+      fn()
+    }
+
+    const timeoutId = setTimeout(() => {
+      settle(() => reject(new Error(`云函数调用超时(${CLOUD_TIMEOUT_MS}ms)`)))
+    }, CLOUD_TIMEOUT_MS)
+
     wxCloud.callFunction({
       name: fnName,
       data: options.data || {},
       success: (res: any) => {
-        const result = res.result || {}
-        if (result.code === 0) {
-          resolve(result.data as T)
-        } else if (result.code === 401) {
-          clearAuth()
-          toast('请先登录')
-          setTimeout(() => uni.reLaunch({ url: '/pages/login/login' }), 800)
-          reject(result)
-        } else {
-          toast(result.message || '请求失败')
-          reject(result)
-        }
+        clearTimeout(timeoutId)
+        settle(() => {
+          const result = res.result || {}
+          if (result.code === 0) {
+            resolve(result.data as T)
+          } else if (result.code === 401) {
+            clearAuth()
+            toast('请先登录')
+            setTimeout(() => uni.reLaunch({ url: '/pages/login/login' }), 800)
+            reject(result)
+          } else {
+            toast(result.message || '请求失败')
+            reject(result)
+          }
+        })
       },
       fail: (err: any) => {
-        console.error('[request] callFunction fail:', err)
-        reject(err)
+        clearTimeout(timeoutId)
+        settle(() => reject(err))
       },
     })
   })
