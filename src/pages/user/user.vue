@@ -1,19 +1,70 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useStreamStore } from '@/stores/stream'
 
 const userStore = useUserStore()
 const streamStore = useStreamStore()
 
-const stats = [
-  { label: '发布', value: 0, key: 'notes' },
-  { label: '关注', value: 0, key: 'following' },
-  { label: '粉丝', value: 0, key: 'followers' },
-  { label: '获赞', value: 0, key: 'likes' },
-]
+/** 从 userStore 拿真实数据,登录后才有;未登录显示 0 */
+const stats = computed(() => [
+  { label: '发布', value: userStore.userInfo?.notes_count ?? 0, key: 'notes' },
+  { label: '关注', value: userStore.userInfo?.following ?? 0, key: 'following' },
+  { label: '粉丝', value: userStore.userInfo?.followers ?? 0, key: 'followers' },
+  { label: '获赞', value: streamStore.totalLikes ?? 0, key: 'likes' },
+])
 
 function onLoginTap() {
   uni.navigateTo({ url: '/pages/login/login' })
+}
+
+function onMenuTap(key: string) {
+  if (!userStore.isLoggedIn && key !== 'settings') {
+    // 大部分菜单需要登录,提示去登录
+    uni.showModal({
+      title: '需要登录',
+      content: '该功能需要登录后使用,是否前往登录?',
+      success: (res) => {
+        if (res.confirm) uni.navigateTo({ url: '/pages/login/login' })
+      },
+    })
+    return
+  }
+  // 各项菜单暂时 toast 占位(扩展功能在 P2 阶段补全)
+  const messages: Record<string, string> = {
+    notes: '我的发布:展示当前用户的所有笔记(P2 计划)',
+    collects: '我的收藏:展示收藏的笔记(P2 计划)',
+    messages: '消息通知:系统消息列表',
+    settings: '设置:清缓存、关于、协议等(P3 计划)',
+  }
+  uni.showToast({ title: messages[key] || '功能开发中', icon: 'none', duration: 1500 })
+}
+
+function onSettingsTap() {
+  // 设置不需要登录,直接进
+  uni.showActionSheet({
+    itemList: ['清空本地缓存', '关于 StreamHub', '用户协议', '隐私政策'],
+    success: (res) => {
+      const items = ['清空本地缓存', '关于 StreamHub', '用户协议', '隐私政策']
+      const picked = items[res.tapIndex]
+      if (picked === '清空本地缓存') {
+        try {
+          uni.clearStorageSync()
+          uni.showToast({ title: '已清空', icon: 'success' })
+        } catch (e) {
+          uni.showToast({ title: '清空失败', icon: 'none' })
+        }
+      } else {
+        uni.showModal({
+          title: picked,
+          content: picked === '关于 StreamHub'
+            ? 'StreamHub Demo v1.0.0\n基于 uni-app + Vue 3 + TypeScript\nGitee / GitHub 开源'
+            : 'demo 项目,无实际协议文本',
+          showCancel: false,
+        })
+      }
+    },
+  })
 }
 
 function onLogout() {
@@ -21,7 +72,10 @@ function onLogout() {
     title: '提示',
     content: '确定要退出登录吗?',
     success: (res) => {
-      if (res.confirm) userStore.logout()
+      if (res.confirm) {
+        userStore.logout()
+        uni.showToast({ title: '已退出', icon: 'success' })
+      }
     },
   })
 }
@@ -57,22 +111,22 @@ function onLogout() {
 
     <!-- 功能列表 -->
     <view class="menu">
-      <view class="menu-item">
+      <view class="menu-item" @tap="onMenuTap('notes')">
         <text class="icon">📝</text>
         <text class="text">我的发布</text>
         <text class="arrow">›</text>
       </view>
-      <view class="menu-item">
+      <view class="menu-item" @tap="onMenuTap('collects')">
         <text class="icon">⭐</text>
         <text class="text">我的收藏</text>
         <text class="arrow">›</text>
       </view>
-      <view class="menu-item">
+      <view class="menu-item" @tap="onMenuTap('messages')">
         <text class="icon">🔔</text>
         <text class="text">消息通知</text>
         <text class="arrow">›</text>
       </view>
-      <view class="menu-item">
+      <view class="menu-item" @tap="onSettingsTap">
         <text class="icon">⚙️</text>
         <text class="text">设置</text>
         <text class="arrow">›</text>

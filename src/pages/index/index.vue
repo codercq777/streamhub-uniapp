@@ -3,7 +3,7 @@
   涉及:下拉刷新、上拉加载、Tab 切换、双列瀑布流、点赞乐观更新
 -->
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, onBeforeUnmount, ref, computed } from 'vue'
 import { onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app'
 import { useStreamStore, type StreamTab } from '@/stores/stream'
 import StreamCard from '@/components/StreamCard/StreamCard.vue'
@@ -30,6 +30,14 @@ onMounted(() => {
   if (store.list.length === 0) {
     store.loadMore()
   }
+  // 监听其他页面发布后通知的事件 → 刷新首页
+  uni.$on('stream:refresh', () => {
+    store.refresh()
+  })
+})
+
+onBeforeUnmount(() => {
+  uni.$off('stream:refresh')
 })
 
 // 下拉刷新

@@ -69,6 +69,12 @@ export const useStreamStore = defineStore('stream', () => {
     item.stats.likes += wasLiked ? -1 : 1
   }
 
+  /** 累加当前 list 中所有笔记的 likes(用户视角的"获赞") */
+  const totalLikes = computed(() => {
+    if (!Array.isArray(list.value)) return 0
+    return list.value.reduce((sum, n) => sum + (n.stats?.likes || 0), 0)
+  })
+
   return {
     list,
     tab,
@@ -76,6 +82,7 @@ export const useStreamStore = defineStore('stream', () => {
     hasMore,
     loading,
     refreshing,
+    totalLikes, // 用户发布笔记的总获赞数(累加 list 中所有 note 的 likes)
     switchTab,
     loadMore,
     refresh,

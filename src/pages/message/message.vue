@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import { getMessageList } from '@/api/user'
 import { formatRelativeTime } from '@/utils/format'
 import Empty from '@/components/Empty/Empty.vue'
 
 interface Message {
   _id: string
-  type: 'like' | 'comment' | 'follow'
-  from_user: { nickname: string; avatar: string }
+  type: 'like' | 'comment' | 'follow' | 'system'
+  from_user?: { _id: string; nickname: string; avatar: string }
   content: string
   read: boolean
   created_at: number
@@ -20,9 +21,10 @@ const typeIcon: Record<string, string> = {
   like: '❤️',
   comment: '💬',
   follow: '➕',
+  system: '📢',
 }
 
-onMounted(async () => {
+async function loadList() {
   loading.value = true
   try {
     const res = await getMessageList({ page: 1 })
@@ -30,20 +32,53 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
-})
+}
+
+onMounted(loadList)
+// 切回 tab 时重新拉(用户从详情页返回时数据可能变化)
+onShow(loadList)
+
+/** 点击消息项:点赞/评论/关注 → 跳对应来源;系统消息 → toast */
+function onItemTap(m: Message) {
+  // 标记已读
+  m.read = true
+  switch (m.type) {
+    case 'like':
+    case 'comment':
+      // 跳详情页(如果有 note_id)
+      uni.showToast({ title: '打开对应笔记(P2)', icon: 'none', duration: 1200 })
+      break
+    case 'follow':
+      // 跳用户主页(P3)
+      uni.showToast({ title: '打开用户主页(P3)', icon: 'none', duration: 1200 })
+      break
+    case 'system':
+      uni.showToast({ title: m.content, icon: 'none', duration: 1500 })
+      break
+    default:
+      uni.showToast({ title: '查看消息详情', icon: 'none', duration: 1200 })
+  }
+}
 </script>
 
 <template>
   <view class="page">
     <view v-if="list.length" class="list">
-      <view v-for="m in list" :key="m._id" class="item" :class="{ unread: !m.read }">
-        <image :src="m.from_user.avatar" class="avatar" />
+      <view
+        v-for="m in list"
+        :key="m._id"
+        class="item"
+        :class="{ unread: !m.read }"
+        @tap="onItemTap(m)"
+      >
+        <image v-if="m.from_user" :src="m.from_user.avatar" class="avatar" />
+        <view v-else class="avatar system-avatar">📢</view>
         <view class="info">
-          <text class="nickname">{{ m.from_user.nickname }}</text>
+          <text class="nickname">{{ m.from_user?.nickname || '系统消息' }}</text>
           <text class="content">{{ m.content }}</text>
           <text class="time">{{ formatRelativeTime(m.created_at) }}</text>
         </view>
-        <text class="type-icon">{{ typeIcon[m.type] }}</text>
+        <text class="type-icon">{{ typeIcon[m.type] || '📢' }}</text>
       </view>
     </view>
     <empty v-else-if="!loading" type="message" text="暂无消息" />

@@ -33,7 +33,31 @@ function onLikeTap() {
 }
 
 function onShare() {
-  uni.showToast({ title: '分享功能待实现', icon: 'none' })
+  // #ifdef MP-WEIXIN
+  // 小程序分享:复制链接到剪贴板(demo 不接 onShareAppMessage)
+  uni.setClipboardData({
+    data: `StreamHub - ${note.value?.title || '看个笔记'}`,
+    success: () => uni.showToast({ title: '标题已复制', icon: 'success' }),
+  })
+  // #endif
+  // #ifdef H5
+  if (typeof navigator !== 'undefined' && navigator.clipboard) {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      uni.showToast({ title: '链接已复制', icon: 'success' })
+    })
+  } else {
+    uni.showToast({ title: '分享功能开发中', icon: 'none' })
+  }
+  // #endif
+}
+
+function onCommentTap() {
+  // 评论组件 P2 待实现,这里先弹个 toast 让用户知道是点哪
+  uni.showToast({
+    title: '评论功能开发中(P2)',
+    icon: 'none',
+    duration: 1500,
+  })
 }
 </script>
 
@@ -79,7 +103,7 @@ function onShare() {
         <text class="icon">{{ note.liked ? '❤️' : '🤍' }}</text>
         <text class="label">{{ formatCount(note.stats.likes) }}</text>
       </view>
-      <view class="action">
+      <view class="action" @tap="onCommentTap">
         <text class="icon">💬</text>
         <text class="label">评论</text>
       </view>

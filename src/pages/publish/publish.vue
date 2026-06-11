@@ -64,6 +64,9 @@ async function onSubmit() {
       tags: tags.value,
     })
     toast('发布成功', 'success')
+    // 通知首页刷新(uni 全局事件,跨页面)
+    uni.$emit('stream:refresh')
+    // 1.2s 后跳回首页,让 toast 有时间显示
     setTimeout(() => uni.switchTab({ url: '/pages/index/index' }), 1200)
   } catch {
     toast('发布失败')
