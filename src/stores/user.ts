@@ -24,6 +24,30 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = getUserInfo<UserInfo>()
   }
 
+  /**
+   * 微信原生授权登录(小程序 chooseAvatar + input nickname)
+   * 不走云函数(本环境云开发 5s 超时跑不通),直接用微信提供的头像/昵称
+   * 存本地 storage 持久化
+   */
+  function loginFromWechat(payload: { avatarUrl: string; nickname: string }) {
+    // 微信头像 URL 临时路径需要存到本地,否则重启会失效
+    // H5 端的 https URL 可直接存
+    const newUser: UserInfo = {
+      _id: `local_${Date.now()}`,
+      nickname: payload.nickname,
+      avatar: payload.avatarUrl,
+      bio: '这个人很懒,什么都没写',
+      followers: 0,
+      following: 0,
+      notes_count: 0,
+    }
+    token.value = `local_token_${Date.now()}`
+    userInfo.value = newUser
+    setToken(token.value)
+    setUserInfo(newUser)
+    return newUser
+  }
+
   /** 微信登录(小程序) / 模拟登录(H5) */
   async function doLogin(payload?: { nickname?: string; avatar?: string }) {
     let code: string
@@ -67,6 +91,7 @@ export const useUserStore = defineStore('user', () => {
     userId,
     bootstrap,
     doLogin,
+    loginFromWechat,
     logout,
     updateUserInfo,
   }
