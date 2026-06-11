@@ -62,13 +62,13 @@ function onSkipLogin() {
 
   .logo-text {
     font-size: 64rpx;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     color: $primary;
     letter-spacing: 4rpx;
   }
 
   .slogan {
-    font-size: 28rpx;
+    font-size: $font-size-base;
     color: $text-secondary;
     margin-top: $spacing-md;
   }
@@ -81,7 +81,7 @@ function onSkipLogin() {
     width: 100%;
     background: $primary;
     color: #fff;
-    font-size: 32rpx;
+    font-size: $font-size-lg;
     border-radius: 48rpx;
     margin-bottom: $spacing-md;
 
@@ -94,7 +94,7 @@ function onSkipLogin() {
     width: 100%;
     background: transparent;
     color: $text-regular;
-    font-size: 28rpx;
+    font-size: $font-size-base;
     border-radius: 48rpx;
   }
 }

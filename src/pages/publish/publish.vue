@@ -132,8 +132,8 @@ async function onSubmit() {
 
 .title-input {
   width: 100%;
-  font-size: 36rpx;
-  font-weight: 600;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
   padding: $spacing-sm 0;
   border-bottom: 1rpx solid $border-color;
 }
@@ -141,9 +141,9 @@ async function onSubmit() {
 .content-input {
   width: 100%;
   min-height: 200rpx;
-  font-size: 28rpx;
+  font-size: $font-size-base;
   padding: $spacing-md 0;
-  line-height: 1.6;
+  line-height: $line-height-normal;
 }
 
 .images {
@@ -174,7 +174,7 @@ async function onSubmit() {
       background: rgba(0, 0, 0, 0.6);
       color: #fff;
       border-radius: 50%;
-      font-size: 32rpx;
+      font-size: $font-size-lg;
     }
   }
 
@@ -213,7 +213,7 @@ async function onSubmit() {
     color: $primary;
     padding: 6rpx 16rpx;
     border-radius: 20rpx;
-    font-size: 24rpx;
+    font-size: $font-size-sm;
   }
 
   .tag-input {
@@ -228,7 +228,7 @@ async function onSubmit() {
   width: 100%;
   background: $primary;
   color: #fff;
-  font-size: 30rpx;
+  font-size: $font-size-md;
   border-radius: 48rpx;
   margin-top: $spacing-lg;
 

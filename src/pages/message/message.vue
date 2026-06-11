@@ -93,9 +93,9 @@ onMounted(async () => {
     gap: 4rpx;
 
     .nickname {
-      font-size: 28rpx;
+      font-size: $font-size-base;
       color: $text-primary;
-      font-weight: 500;
+      font-weight: $font-weight-medium;
     }
 
     .content {
@@ -110,7 +110,7 @@ onMounted(async () => {
   }
 
   .type-icon {
-    font-size: 48rpx;
+    font-size: $font-size-3xl;
     margin-left: $spacing-sm;
   }
 }

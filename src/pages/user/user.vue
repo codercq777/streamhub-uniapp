@@ -126,13 +126,13 @@ function onLogout() {
       color: #fff;
 
       .nickname {
-        font-size: 36rpx;
-        font-weight: 600;
+        font-size: $font-size-xl;
+        font-weight: $font-weight-semibold;
         display: block;
       }
 
       .bio {
-        font-size: 24rpx;
+        font-size: $font-size-sm;
         opacity: 0.8;
         margin-top: 8rpx;
         display: block;
@@ -153,13 +153,13 @@ function onLogout() {
 
       .num {
         display: block;
-        font-size: 32rpx;
-        font-weight: 600;
+        font-size: $font-size-lg;
+        font-weight: $font-weight-semibold;
       }
 
       .label {
         display: block;
-        font-size: 24rpx;
+        font-size: $font-size-sm;
         opacity: 0.85;
         margin-top: 4rpx;
       }
@@ -185,18 +185,18 @@ function onLogout() {
 
     .icon {
       width: 60rpx;
-      font-size: 32rpx;
+      font-size: $font-size-lg;
     }
 
     .text {
       flex: 1;
-      font-size: 30rpx;
+      font-size: $font-size-md;
       color: $text-primary;
     }
 
     .arrow {
       color: $text-placeholder;
-      font-size: 36rpx;
+      font-size: $font-size-xl;
     }
   }
 }

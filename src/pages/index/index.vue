@@ -150,13 +150,13 @@ function onRetry() {
     flex: 1;
     text-align: center;
     padding: 24rpx 0;
-    font-size: 30rpx;
+    font-size: $font-size-md;
     color: $text-secondary;
     position: relative;
 
     &.active {
       color: $text-primary;
-      font-weight: 600;
+      font-weight: $font-weight-semibold;
 
       &::after {
         content: '';

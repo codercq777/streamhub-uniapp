@@ -121,10 +121,10 @@ function onShare() {
   margin-top: $spacing-sm;
 
   .title {
-    font-size: 36rpx;
-    font-weight: 600;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
     color: $text-primary;
-    line-height: 1.4;
+    line-height: $line-height-tight;
     margin-bottom: $spacing-md;
   }
 
@@ -145,9 +145,9 @@ function onShare() {
       flex-direction: column;
 
       .nickname {
-        font-size: 28rpx;
+        font-size: $font-size-base;
         color: $text-primary;
-        font-weight: 500;
+        font-weight: $font-weight-medium;
       }
 
       .time {
@@ -159,9 +159,9 @@ function onShare() {
   }
 
   .text {
-    font-size: 30rpx;
+    font-size: $font-size-md;
     color: $text-primary;
-    line-height: 1.7;
+    line-height: $line-height-relaxed;
     margin-bottom: $spacing-md;
   }
 
@@ -172,7 +172,7 @@ function onShare() {
     margin-bottom: $spacing-md;
 
     .tag {
-      font-size: 24rpx;
+      font-size: $font-size-sm;
       color: $primary;
       background: rgba(255, 36, 66, 0.08);
       padding: 4rpx 16rpx;
@@ -183,7 +183,7 @@ function onShare() {
   .stats {
     display: flex;
     gap: $spacing-md;
-    font-size: 24rpx;
+    font-size: $font-size-sm;
     color: $text-secondary;
     padding-top: $spacing-md;
     border-top: 1rpx solid $border-color;
@@ -225,7 +225,7 @@ function onShare() {
     }
 
     .icon {
-      font-size: 40rpx;
+      font-size: $font-size-2xl;
     }
 
     .label {

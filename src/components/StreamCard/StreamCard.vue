@@ -156,10 +156,10 @@ const likeBounce = ref(false)
 }
 
 .title {
-  font-size: 30rpx;
-  font-weight: 500;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
   color: $text-primary;
-  line-height: 1.4;
+  line-height: $line-height-tight;
   padding: $spacing-sm $spacing-sm 0;
 }
 
@@ -199,7 +199,7 @@ const likeBounce = ref(false)
     }
 
     .nickname {
-      font-size: 24rpx;
+      font-size: $font-size-sm;
       color: $text-regular;
       max-width: 200rpx;
     }
@@ -207,7 +207,7 @@ const likeBounce = ref(false)
 
   .stats {
     .stat-item {
-      font-size: 24rpx;
+      font-size: $font-size-sm;
       color: $text-secondary;
       display: inline-block;
       transform-origin: center;
