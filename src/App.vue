@@ -50,13 +50,7 @@ page {
   animation: fade-in $duration-slow $ease-out;
 }
 
-/* 减少动效偏好 */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+/* 减少动效偏好:由各组件 scoped 内的 @media 处理(WXSS 不支持 * 通用选择器) */
 
 /* 安全区适配 */
 .safe-area-bottom {
