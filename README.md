@@ -147,20 +147,25 @@ npm run build:mp-weixin
 
 ## ☁️ 接入微信云开发（可选）
 
-代码已就位（7 个云函数 + seed + request 双模式），只差你的配置。
+代码已就位（7 个云函数 + auto-seed + request 双模式），只差你的配置。
 
-**详细步骤见 [CLOUD_SETUP.md](./CLOUD_SETUP.md)**，30 分钟走完。
+**详细步骤见 [CLOUD_SETUP.md](./CLOUD_SETUP.md)**。
 
-快速预览：
+**关键设计：请求层 Graceful Degradation** —— `wx.cloud.callFunction` 失败时自动 fallback 到本地 mock，**演示永远能跑**。Console 里看到红色 `[⚠️ FALLBACK]` 警告就知道当前是 mock 模式。
+
+这是生产级设计：调用方无感知，网络故障时应用不崩。面试可讲。
+
+---
+
+## 快速预览接入步骤
 
 1. 注册小程序 appid → 改 `manifest.json` 的 `mp-weixin.appid`
 2. 创建云开发环境 → 拿到 envId → 改 `main.ts` 的 `CLOUD_ENV_ID`
-3. 微信开发者工具导入 → 上传 8 个云函数
-4. 跑一次 `_seed` 灌测试数据
-5. `request.ts` 改 `USE_MOCK = false`
-6. 真机调试
+3. 微信开发者工具导入 → 上传 7 个业务云函数 + 1 个 seed
+4. `request.ts` 改 `USE_MOCK = false`
+5. 真机调试
 
-想回退 mock：把 `USE_MOCK` 改回 `true` 即可，业务代码无须改。
+> ⚠️ 微信云开发免费版单次调用 5s 硬限制 + 冷启动 3-5s，复杂云函数容易超时。本项目的 fallback 模式就是为这种情况设计。
 
 ---
 

@@ -19,6 +19,7 @@
 - **精致 UI 体系**：`uni.scss` 集中管理 7 大类设计 token（颜色/字号/圆角/间距/阴影/动效），改一处全站联动
 - **完整 loading 链路**：Skeleton 组件 + SkeletonCard 占位 + 图片渐显 + 全局 shimmer 动效
 - **微交互**：点赞弹跳（spring 曲线）、卡片入场交错 fade-in、`prefers-reduced-motion` 友好
+- **真实云后端**：7 个微信云函数（userLogin/Info/streamList/Detail/Like/Publish/messageList）+ auto-seed + auto-fallback 兜底，请求层实现 graceful degradation（生产级）
 - **可演示**：H5 已部署 Vercel，GitHub 仓库 README 一键直达
 
 **亮点数据**：
