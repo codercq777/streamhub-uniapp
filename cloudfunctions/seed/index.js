@@ -110,46 +110,43 @@ exports.main = async (event, context) => {
   const result = { notes: 0, users: 0, messages: 0, errors: [] }
 
   try {
-    // notes
+    // notes — 并行写,避免超时
     const notes = buildNotes()
-    for (const n of notes) {
-      try {
-        await db.collection('notes').doc(n._id).set({ data: n })
-        result.notes++
-      } catch (e) {
-        result.errors.push(`note ${n._id}: ${e.message}`)
-      }
-    }
+    const noteResults = await Promise.allSettled(
+      notes.map((n) => db.collection('notes').doc(n._id).set({ data: n }))
+    )
+    noteResults.forEach((r, i) => {
+      if (r.status === 'fulfilled') result.notes++
+      else result.errors.push(`note ${notes[i]._id}: ${r.reason?.message}`)
+    })
 
     // users(只在没有 OPENID 时插入模拟用户,有 OPENID 时跳过避免污染)
     if (!OPENID) {
       const users = buildUsers()
-      for (const u of users) {
-        try {
-          await db.collection('users').doc(u._id).set({ data: u })
-          result.users++
-        } catch (e) {
-          result.errors.push(`user ${u._id}: ${e.message}`)
-        }
-      }
+      const userResults = await Promise.allSettled(
+        users.map((u) => db.collection('users').doc(u._id).set({ data: u }))
+      )
+      userResults.forEach((r, i) => {
+        if (r.status === 'fulfilled') result.users++
+        else result.errors.push(`user ${users[i]._id}: ${r.reason?.message}`)
+      })
     } else {
       result.users = 'skipped (有 OPENID,不插模拟用户)'
     }
 
     // messages
     const messages = buildMessages()
-    for (const m of messages) {
-      try {
-        await db.collection('messages').doc(m._id).set({ data: m })
-        result.messages++
-      } catch (e) {
-        result.errors.push(`msg ${m._id}: ${e.message}`)
-      }
-    }
+    const msgResults = await Promise.allSettled(
+      messages.map((m) => db.collection('messages').doc(m._id).set({ data: m }))
+    )
+    msgResults.forEach((r, i) => {
+      if (r.status === 'fulfilled') result.messages++
+      else result.errors.push(`msg ${messages[i]._id}: ${r.reason?.message}`)
+    })
 
     return { code: 0, data: result }
   } catch (err) {
-    console.error('[_seed] error:', err)
+    console.error('[seed] error:', err)
     return { code: 500, message: err.message, data: result }
   }
 }
