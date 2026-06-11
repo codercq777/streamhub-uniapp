@@ -72,16 +72,30 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
       return
     }
 
-    // ---- 真云函数(小程序端) ----
+    // ---- 真云函数(小程序端) + 自动 fallback ----
     // #ifdef MP-WEIXIN
-    callCloudFunction<T>(options).then(resolve).catch(reject)
+    callCloudFunction<T>(options)
+      .then(resolve)
+      .catch((err) => {
+        // 失败时自动 fallback 到 mock,保证 demo 不卡死
+        console.warn('[request] 云函数失败,fallback 到 mock:', err?.errMsg || err?.message)
+        try {
+          const data = mockHandler(options.url, options.data || {})
+          resolve(data as T)
+        } catch (e) {
+          reject(err)
+        }
+      })
     // #endif
 
-    // ---- H5 端云开发 HTTP API(暂未实现,fallback 到提示) ----
+    // ---- H5 端云开发 HTTP API(暂未实现,fallback 到 mock) ----
     // #ifdef H5
-    uni.hideLoading()
-    toast('H5 端暂未对接云函数,请在小程序中调试或保持 USE_MOCK=true')
-    reject(new Error('H5 暂不支持云函数'))
+    try {
+      const data = mockHandler(options.url, options.data || {})
+      resolve(data as T)
+    } catch (e) {
+      reject(e)
+    }
     // #endif
   })
 }
@@ -93,8 +107,6 @@ function callCloudFunction<T>(options: RequestOptions): Promise<T> {
     // @ts-ignore
     const wxCloud = (typeof wx !== 'undefined' && wx.cloud) ? wx.cloud : null
     if (!wxCloud) {
-      uni.hideLoading()
-      toast('云开发未初始化')
       reject(new Error('wx.cloud 不可用'))
       return
     }
@@ -103,7 +115,6 @@ function callCloudFunction<T>(options: RequestOptions): Promise<T> {
     try {
       fnName = urlToFnName(options.url)
     } catch (e: any) {
-      uni.hideLoading()
       reject(e)
       return
     }
@@ -112,7 +123,6 @@ function callCloudFunction<T>(options: RequestOptions): Promise<T> {
       name: fnName,
       data: options.data || {},
       success: (res: any) => {
-        uni.hideLoading()
         const result = res.result || {}
         if (result.code === 0) {
           resolve(result.data as T)
@@ -127,8 +137,6 @@ function callCloudFunction<T>(options: RequestOptions): Promise<T> {
         }
       },
       fail: (err: any) => {
-        uni.hideLoading()
-        toast('云函数调用失败')
         console.error('[request] callFunction fail:', err)
         reject(err)
       },
