@@ -78,7 +78,13 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
       .then(resolve)
       .catch((err) => {
         // 失败时自动 fallback 到 mock,保证 demo 不卡死
-        console.warn('[request] 云函数失败,fallback 到 mock:', err?.errMsg || err?.message)
+        // 这就是 "graceful degradation" —— 真实生产环境的重要模式
+        console.warn(
+          '%c[⚠️ FALLBACK] 云函数失败,使用 mock 数据兜底',
+          'color: #ff2442; font-weight: bold; font-size: 14px;',
+          '\n原因:', err?.errMsg || err?.message,
+          '\n场景:', options.url,
+        )
         try {
           const data = mockHandler(options.url, options.data || {})
           resolve(data as T)
@@ -122,7 +128,6 @@ function callCloudFunction<T>(options: RequestOptions): Promise<T> {
     wxCloud.callFunction({
       name: fnName,
       data: options.data || {},
-      config: { timeout: 30000 }, // 30 秒,覆盖默认 5s,避开冷启动
       success: (res: any) => {
         const result = res.result || {}
         if (result.code === 0) {
