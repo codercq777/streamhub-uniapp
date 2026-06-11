@@ -10,14 +10,14 @@
 import { getToken } from '@/utils/auth'
 import { toast } from '@/utils/platform'
 
-export interface RequestOptions {
+export type RequestOptions = {
   url: string
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
   data?: Record<string, any>
   hideLoading?: boolean
 }
 
-export interface ApiResponse<T = any> {
+export type ApiResponse<T = any> = {
   list?: T[]
   hasMore?: boolean
   total?: number

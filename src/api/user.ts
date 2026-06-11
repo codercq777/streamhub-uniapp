@@ -1,9 +1,9 @@
 /**
  * 用户相关接口
  */
-import { request, ApiResponse } from './request'
+import { request, type ApiResponse } from './request'
 
-export interface UserInfo {
+export type UserInfo = {
   _id: string
   nickname: string
   avatar: string

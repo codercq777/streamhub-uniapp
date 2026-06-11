@@ -3,7 +3,7 @@
  */
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { getStreamList, NoteItem } from '@/api/stream'
+import { getStreamList, type NoteItem } from '@/api/stream'
 
 export type StreamTab = 'recommend' | 'follow'
 

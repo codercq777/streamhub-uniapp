@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { getNoteDetail, NoteItem } from '@/api/stream'
+import { getNoteDetail, type NoteItem } from '@/api/stream'
 import { formatCount, formatRelativeTime } from '@/utils/format'
 import { useUserStore } from '@/stores/user'
 

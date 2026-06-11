@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app'
-import { useStreamStore, StreamTab } from '@/stores/stream'
+import { useStreamStore, type StreamTab } from '@/stores/stream'
 import StreamCard from '@/components/StreamCard/StreamCard.vue'
 import Empty from '@/components/Empty/Empty.vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'

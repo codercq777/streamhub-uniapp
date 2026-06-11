@@ -1,9 +1,9 @@
 /**
  * 信息流相关接口
  */
-import { request, ApiResponse } from './request'
+import { request, type ApiResponse } from './request'
 
-export interface NoteItem {
+export type NoteItem = {
   _id: string
   title: string
   content: string

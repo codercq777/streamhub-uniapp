@@ -6,7 +6,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { getToken, setToken, clearAuth, getUserInfo, setUserInfo } from '@/utils/auth'
-import { login as loginApi, UserInfo } from '@/api/user'
+import { login as loginApi, type UserInfo } from '@/api/user'
 
 export const useUserStore = defineStore('user', () => {
   // ---- state ----
