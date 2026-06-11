@@ -32,7 +32,7 @@
       "postcss": true
     },
     "usingComponents": true,
-    "cloudfunctionRoot": "../../cloudfunctions/",
+    "cloudfunctionRoot": "cloudfunctions/",
     "lazyCodeLoading": "requiredComponents"
   },
   "h5": {
