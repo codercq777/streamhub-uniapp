@@ -122,6 +122,7 @@ function callCloudFunction<T>(options: RequestOptions): Promise<T> {
     wxCloud.callFunction({
       name: fnName,
       data: options.data || {},
+      config: { timeout: 30000 }, // 30 秒,覆盖默认 5s,避开冷启动
       success: (res: any) => {
         const result = res.result || {}
         if (result.code === 0) {
