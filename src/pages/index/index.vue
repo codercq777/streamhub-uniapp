@@ -100,18 +100,22 @@ function onRetry() {
     <view v-else-if="store.list.length > 0" class="columns">
       <view class="column">
         <stream-card
-          v-for="item in leftList"
+          v-for="(item, i) in leftList"
           :key="item._id"
           :note="item"
+          class="fade-in"
+          :style="{ animationDelay: `${i * 50}ms` }"
           @like="onLike"
           @click="onCardTap"
         />
       </view>
       <view class="column">
         <stream-card
-          v-for="item in rightList"
+          v-for="(item, i) in rightList"
           :key="item._id"
           :note="item"
+          class="fade-in"
+          :style="{ animationDelay: `${(i + 1) * 50}ms` }"
           @like="onLike"
           @click="onCardTap"
         />

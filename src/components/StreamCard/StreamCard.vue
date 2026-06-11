@@ -37,10 +37,15 @@ function onImgError(e: any) {
 
 function onLikeTap() {
   emit('like', props.note._id)
+  // 触发点赞弹出动画
+  likeBounce.value = true
 }
 function onCardTap() {
   emit('click', props.note._id)
 }
+
+/** 点赞弹跳动画 - tap 时为 true,动画结束清掉 */
+const likeBounce = ref(false)
 </script>
 
 <template>
@@ -78,7 +83,11 @@ function onCardTap() {
         <text class="nickname text-ellipsis">{{ note.author.nickname }}</text>
       </view>
       <view class="stats" @tap.stop="onLikeTap">
-        <text class="stat-item" :class="{ active: note.liked }">
+        <text
+          class="stat-item"
+          :class="{ active: note.liked, bouncing: likeBounce }"
+          @animationend="likeBounce = false"
+        >
           {{ note.liked ? '❤️' : '🤍' }} {{ formatCount(note.stats.likes) }}
         </text>
       </view>
@@ -200,9 +209,16 @@ function onCardTap() {
     .stat-item {
       font-size: 24rpx;
       color: $text-secondary;
+      display: inline-block;
+      transform-origin: center;
+      transition: color $duration $ease-out;
 
       &.active {
         color: $primary;
+      }
+
+      &.bouncing {
+        animation: like-bounce 0.4s $ease-spring;
       }
     }
   }
@@ -213,5 +229,18 @@ function onCardTap() {
   font-size: 22rpx;
   color: $text-placeholder;
   padding: 0 $spacing-sm $spacing-sm;
+}
+
+@keyframes like-bounce {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+/* 减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .stat-item.bouncing {
+    animation: none;
+  }
 }
 </style>

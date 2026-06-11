@@ -8,6 +8,7 @@ import { useUserStore } from '@/stores/user'
 const userStore = useUserStore()
 const note = ref<NoteItem | null>(null)
 const loading = ref(true)
+const likeBounce = ref(false)
 
 onLoad(async (query) => {
   const id = query?.id as string
@@ -27,7 +28,8 @@ function onLikeTap() {
   const wasLiked = note.value.liked
   note.value.liked = !wasLiked
   note.value.stats.likes += wasLiked ? -1 : 1
-  uni.showToast({ title: wasLiked ? '已取消' : '已点赞', icon: 'none' })
+  likeBounce.value = true
+  uni.showToast({ title: wasLiked ? '已取消' : '已点赞', icon: 'none', duration: 800 })
 }
 
 function onShare() {
@@ -68,7 +70,12 @@ function onShare() {
 
     <!-- 底部操作栏 -->
     <view class="footer safe-area-bottom">
-      <view class="action" :class="{ active: note.liked }" @tap="onLikeTap">
+      <view
+        class="action"
+        :class="{ active: note.liked, bouncing: likeBounce }"
+        @tap="onLikeTap"
+        @animationend="likeBounce = false"
+      >
         <text class="icon">{{ note.liked ? '❤️' : '🤍' }}</text>
         <text class="label">{{ formatCount(note.stats.likes) }}</text>
       </view>
@@ -193,15 +200,28 @@ function onShare() {
   justify-content: space-around;
   padding: 16rpx 0;
   border-top: 1rpx solid $border-color;
+  box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.04);
 
   .action {
     display: flex;
     flex-direction: column;
     align-items: center;
     color: $text-secondary;
+    padding: $spacing-2 $spacing-5;
+    border-radius: $radius;
+    transition: background $duration-fast $ease-out, color $duration $ease-out;
+    transform-origin: center;
+
+    &:active {
+      background: $bg-overlay;
+    }
 
     &.active .icon {
       color: $primary;
+    }
+
+    &.bouncing .icon {
+      animation: like-bounce 0.4s $ease-spring;
     }
 
     .icon {
@@ -212,6 +232,19 @@ function onShare() {
       font-size: 22rpx;
       margin-top: 4rpx;
     }
+  }
+}
+
+@keyframes like-bounce {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+/* 减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .action.bouncing .icon {
+    animation: none;
   }
 }
 
