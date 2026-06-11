@@ -5,9 +5,9 @@
  *
  * 状态: 默认 'approved'(demo 简化,生产可改为 'pending' 走审核)
  */
-const { db } = require('../_shared/db')
-const { ok, fail } = require('../_shared/response')
-const { getCurrentUser } = require('../_shared/auth')
+const { db } = require('./_shared/db')
+const { ok, fail } = require('./_shared/response')
+const { getCurrentUser } = require('./_shared/auth')
 
 exports.main = async (event, context) => {
   const { title, content, images = [], tags = [] } = event

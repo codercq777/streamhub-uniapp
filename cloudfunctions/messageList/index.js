@@ -5,9 +5,9 @@
  *
  * 取当前用户的所有消息,按时间倒序
  */
-const { db, _ } = require('../_shared/db')
-const { ok, fail } = require('../_shared/response')
-const { requireOpenid } = require('../_shared/auth')
+const { db, _ } = require('./_shared/db')
+const { ok, fail } = require('./_shared/response')
+const { requireOpenid } = require('./_shared/auth')
 
 exports.main = async (event, context) => {
   const { page = 1, pageSize = 20 } = event

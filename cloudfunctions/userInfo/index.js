@@ -5,9 +5,9 @@
  *
  * 流程: 从 context.OPENID 拿当前用户
  */
-const { db } = require('../_shared/db')
-const { ok, fail } = require('../_shared/response')
-const { getCurrentUser } = require('../_shared/auth')
+const { db } = require('./_shared/db')
+const { ok, fail } = require('./_shared/response')
+const { getCurrentUser } = require('./_shared/auth')
 
 exports.main = async (event, context) => {
   try {

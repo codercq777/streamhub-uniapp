@@ -6,8 +6,8 @@
  * 状态约定: status: 'approved' 才会被列出
  * 关注流: 简化处理,只取全部(生产环境需要 join follows)
  */
-const { db, _ } = require('../_shared/db')
-const { ok, fail } = require('../_shared/response')
+const { db, _ } = require('./_shared/db')
+const { ok, fail } = require('./_shared/response')
 
 exports.main = async (event) => {
   const { page = 1, pageSize = 20, tab = 'recommend' } = event

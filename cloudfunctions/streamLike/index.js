@@ -6,9 +6,9 @@
  * 写 likes 集合(关系),更新 notes.stats.likes
  * 用事务保证一致性
  */
-const { db, _ } = require('../_shared/db')
-const { ok, fail } = require('../_shared/response')
-const { requireOpenid } = require('../_shared/auth')
+const { db, _ } = require('./_shared/db')
+const { ok, fail } = require('./_shared/response')
+const { requireOpenid } = require('./_shared/auth')
 
 exports.main = async (event, context) => {
   const { id, liked } = event

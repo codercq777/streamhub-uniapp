@@ -5,8 +5,8 @@
  *
  * 顺手 +1 views
  */
-const { db, _ } = require('../_shared/db')
-const { ok, fail } = require('../_shared/response')
+const { db, _ } = require('./_shared/db')
+const { ok, fail } = require('./_shared/response')
 
 exports.main = async (event) => {
   const { id } = event

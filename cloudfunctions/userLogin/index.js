@@ -8,8 +8,8 @@
  *   2. 查 users 集合,不存在则创建
  *   3. 生成 token 返回
  */
-const { db } = require('../_shared/db')
-const { ok, fail } = require('../_shared/response')
+const { db } = require('./_shared/db')
+const { ok, fail } = require('./_shared/response')
 
 const WX_APPID = process.env.WX_APPID || '请替换为你的小程序 appid'
 const WX_SECRET = process.env.WX_SECRET || '请替换为你的小程序 secret'
