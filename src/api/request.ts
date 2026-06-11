@@ -1,15 +1,23 @@
 /**
- * 请求封装 - mock 模式先行,真接口后接
+ * 请求封装 - 双模式
+ *
+ * 模式 1: USE_MOCK = true  → 走 mockHandler,本地起前端就能跑(开发期)
+ * 模式 2: USE_MOCK = false → 走云函数(需真 appid + 云开发环境)
  *
  * 关键设计:
- * 1. dev 环境走 mock,prod 走 wx.cloud.callFunction(小程序) / uni.request(H5)
- * 2. 统一错误处理:401 跳转登录,其他 toast
- * 3. 统一 loading 控制
+ * 1. 统一响应格式: { code: 0, data } 或 { code: 4xx/5xx, message }
+ * 2. 401 跳登录,其他 toast
+ * 3. URL → 云函数名映射,业务代码无须关心模式
  */
 
-import { getToken } from '@/utils/auth'
+import { getToken, clearAuth } from '@/utils/auth'
 import { toast } from '@/utils/platform'
 
+// ============ 开关 ============
+/** 是否使用 mock 数据(部署前改为 false 即可接真云函数) */
+export const USE_MOCK = true
+
+// ============ 类型 ============
 export type RequestOptions = {
   url: string
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
@@ -24,16 +32,33 @@ export type ApiResponse<T = any> = {
   [key: string]: any
 }
 
-// 简易开关:开发期 mock,生产接云函数
-const USE_MOCK = true
+// ============ URL → 云函数名映射 ============
+const URL_TO_FN: Record<string, string> = {
+  '/user/login': 'userLogin',
+  '/user/info': 'userInfo',
+  '/stream/list': 'streamList',
+  '/stream/detail': 'streamDetail',
+  '/stream/like': 'streamLike',
+  '/stream/publish': 'streamPublish',
+  '/message/list': 'messageList',
+}
 
+function urlToFnName(url: string): string {
+  // /stream/detail?id=xxx → /stream/detail
+  const path = url.split('?')[0]
+  const name = URL_TO_FN[path]
+  if (!name) throw new Error(`未配置云函数:${path}`)
+  return name
+}
+
+// ============ 主体 ============
 export function request<T = any>(options: RequestOptions): Promise<T> {
   return new Promise((resolve, reject) => {
     if (!options.hideLoading) {
       uni.showLoading({ title: '加载中...', mask: true })
     }
 
-    // ----- MOCK 模式 -----
+    // ---- MOCK 模式 ----
     if (USE_MOCK) {
       setTimeout(() => {
         uni.hideLoading()
@@ -47,38 +72,71 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
       return
     }
 
-    // ----- 真实请求(暂时以 HTTP 形式给出,接云函数时改 wx.cloud.callFunction) -----
-    uni.request({
-      url: '/api' + options.url,
-      method: options.method || 'GET',
-      data: options.data,
-      header: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-      success: (res) => {
+    // ---- 真云函数(小程序端) ----
+    // #ifdef MP-WEIXIN
+    callCloudFunction<T>(options).then(resolve).catch(reject)
+    // #endif
+
+    // ---- H5 端云开发 HTTP API(暂未实现,fallback 到提示) ----
+    // #ifdef H5
+    uni.hideLoading()
+    toast('H5 端暂未对接云函数,请在小程序中调试或保持 USE_MOCK=true')
+    reject(new Error('H5 暂不支持云函数'))
+    // #endif
+  })
+}
+
+// ============ 云函数调用(仅小程序) ============
+function callCloudFunction<T>(options: RequestOptions): Promise<T> {
+  return new Promise((resolve, reject) => {
+    // 动态 require,避免 H5 端打包 wx-server-sdk
+    // @ts-ignore
+    const wxCloud = (typeof wx !== 'undefined' && wx.cloud) ? wx.cloud : null
+    if (!wxCloud) {
+      uni.hideLoading()
+      toast('云开发未初始化')
+      reject(new Error('wx.cloud 不可用'))
+      return
+    }
+
+    let fnName: string
+    try {
+      fnName = urlToFnName(options.url)
+    } catch (e: any) {
+      uni.hideLoading()
+      reject(e)
+      return
+    }
+
+    wxCloud.callFunction({
+      name: fnName,
+      data: options.data || {},
+      success: (res: any) => {
         uni.hideLoading()
-        if (res.statusCode === 200) {
-          resolve(res.data as T)
-        } else if (res.statusCode === 401) {
+        const result = res.result || {}
+        if (result.code === 0) {
+          resolve(result.data as T)
+        } else if (result.code === 401) {
+          clearAuth()
           toast('请先登录')
-          uni.removeStorageSync('STREAMHUB_TOKEN')
-          setTimeout(() => uni.reLaunch({ url: '/pages/login/login' }), 1000)
-          reject(res)
+          setTimeout(() => uni.reLaunch({ url: '/pages/login/login' }), 800)
+          reject(result)
         } else {
-          toast((res.data as any)?.message || '请求失败')
-          reject(res)
+          toast(result.message || '请求失败')
+          reject(result)
         }
       },
-      fail: (err) => {
+      fail: (err: any) => {
         uni.hideLoading()
-        toast('网络异常')
+        toast('云函数调用失败')
+        console.error('[request] callFunction fail:', err)
         reject(err)
       },
     })
   })
 }
 
-// ---------- MOCK 数据生成 ----------
+// ============ MOCK 数据生成(开发期) ============
 function mockHandler(url: string, data: Record<string, any>): any {
   if (url.startsWith('/stream/list')) {
     return {

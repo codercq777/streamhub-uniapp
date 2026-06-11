@@ -145,6 +145,25 @@ npm run build:mp-weixin
 
 ---
 
+## ☁️ 接入微信云开发（可选）
+
+代码已就位（7 个云函数 + seed + request 双模式），只差你的配置。
+
+**详细步骤见 [CLOUD_SETUP.md](./CLOUD_SETUP.md)**，30 分钟走完。
+
+快速预览：
+
+1. 注册小程序 appid → 改 `manifest.json` 的 `mp-weixin.appid`
+2. 创建云开发环境 → 拿到 envId → 改 `main.ts` 的 `CLOUD_ENV_ID`
+3. 微信开发者工具导入 → 上传 8 个云函数
+4. 跑一次 `_seed` 灌测试数据
+5. `request.ts` 改 `USE_MOCK = false`
+6. 真机调试
+
+想回退 mock：把 `USE_MOCK` 改回 `true` 即可，业务代码无须改。
+
+---
+
 ## 🔑 关键代码导读
 
 ### Vue 2 → Vue 3 迁移点
