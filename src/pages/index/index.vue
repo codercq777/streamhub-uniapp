@@ -20,10 +20,10 @@ const showSkeleton = computed(() => store.loading && store.list.length === 0)
 // 骨架填充数据(让高度有变化,避免左右两列错位难看)
 const skeletonSeeds = [0, 1, 2, 3, 4, 5]
 
-const loadMoreStatus = computed<'loading' | 'nomore' | 'error'>(() => {
+const loadMoreStatus = computed<'loading' | 'nomore' | 'error' | 'idle'>(() => {
   if (store.loading) return 'loading'
   if (!store.hasMore) return 'nomore'
-  return 'loading'
+  return 'idle'
 })
 
 onMounted(() => {
@@ -119,7 +119,7 @@ function onRetry() {
     </view>
 
     <!-- 空状态 -->
-    <empty v-else-if="!store.loading" text="还没有内容,下拉刷新试试" icon="🌱" />
+    <empty v-else-if="!store.loading" type="empty" text="还没有内容,下拉刷新试试" />
 
     <!-- 加载状态 -->
     <view v-if="store.list.length > 0" class="footer">

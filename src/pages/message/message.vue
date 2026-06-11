@@ -46,7 +46,7 @@ onMounted(async () => {
         <text class="type-icon">{{ typeIcon[m.type] }}</text>
       </view>
     </view>
-    <empty v-else-if="!loading" text="暂无消息" icon="🔔" />
+    <empty v-else-if="!loading" type="message" text="暂无消息" />
   </view>
 </template>
 
