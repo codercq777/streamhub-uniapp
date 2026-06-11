@@ -26,12 +26,13 @@ export const useUserStore = defineStore('user', () => {
 
   /** 微信登录(小程序) / 模拟登录(H5) */
   async function doLogin(payload?: { nickname?: string; avatar?: string }) {
+    let code: string
     // #ifdef MP-WEIXIN
     const res = await uni.login({ provider: 'weixin' })
-    const code = (res as any).code
+    code = (res as any).code || ''
     // #endif
     // #ifdef H5
-    const code = 'mock_code_h5'
+    code = 'mock_code_h5'
     // #endif
 
     const result = await loginApi({

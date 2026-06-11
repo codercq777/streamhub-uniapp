@@ -4,6 +4,10 @@
  * Vue 3 + TS: 仍可用条件编译,但运行时用 process.env.UNI_PLATFORM
  */
 
+// uni-app 在构建时会替换 process.env.* 为字面量
+// 这里声明一个类型让 TypeScript 认识
+declare const process: { env: { UNI_PLATFORM?: string } }
+
 export const PLATFORM = {
   isH5: process.env.UNI_PLATFORM === 'h5',
   isMpWeixin: process.env.UNI_PLATFORM === 'mp-weixin',
