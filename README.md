@@ -128,6 +128,23 @@ npm run build:mp-weixin
 
 ---
 
+## 🌐 一键部署到 Vercel
+
+仓库已配 `vercel.json`，**直接 import** 即可：
+
+1. 登录 [Vercel](https://vercel.com)
+2. **Add New → Project → Import** `codercq777/streamhub-uniapp`
+3. Framework Preset 选 **Other**（Vercel 不认识 uni-app）
+4. 其他保持默认：
+   - Build Command: `npm run build:h5`
+   - Output Directory: `dist/build/h5`
+   - Install Command: `npm install`
+5. 点 **Deploy**
+
+> 部署后访问根路径即可。H5 用 hash 路由，刷新不出 404。
+
+---
+
 ## 🔑 关键代码导读
 
 ### Vue 2 → Vue 3 迁移点
