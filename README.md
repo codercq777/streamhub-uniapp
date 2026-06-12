@@ -153,7 +153,7 @@ npm run build:mp-weixin
 
 **关键设计：请求层 Graceful Degradation** —— `wx.cloud.callFunction` 失败时自动 fallback 到本地 mock，**演示永远能跑**。Console 里看到红色 `[⚠️ FALLBACK]` 警告就知道当前是 mock 模式。
 
-这是生产级设计：调用方无感知，网络故障时应用不崩。面试可讲。
+调用方零感知，弱网 / 云函数冷启动超时 / 配额耗尽时应用不崩。
 
 ---
 
@@ -267,4 +267,4 @@ A: 检查 AppID 是否填写，AppID 错误会被拒绝运行。
 
 ## 📄 License
 
-MIT - 仅供学习与求职作品集使用
+MIT
